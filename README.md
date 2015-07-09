@@ -1,5 +1,5 @@
 ## OpenResty Redis Backed API Metrics
-This is a OpenResty Lua and Redis powered logger. We use it at The Movie Database (TMDb) to keep track of some basic metrics:
+This is a OpenResty Lua and Redis powered logger. We use it at [The Movie Database (TMDb)](https://www.themoviedb.org) to keep track of some basic metrics:
 
 * unique api keys per day
 * unique ips per day
