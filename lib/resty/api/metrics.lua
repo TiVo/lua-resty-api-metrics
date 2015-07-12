@@ -9,11 +9,11 @@ function log_request(redis_connection, redis_pool_size, ip, uri_parameters, log_
         local date = os.date("%Y-%m-%d")
         redis_connection:init_pipeline()
 
-        redis_connection:sadd("KEYS:" .. date .. "", uri_parameters.api_key)
-        redis_connection:incr("REQUESTS_DAY:" .. date .. "")
-        redis_connection:incr("REQUESTS_KEY_DAY:" .. date .. ":" .. uri_parameters.api_key .. "")
-        redis_connection:pfadd("IPS_DAY:" .. date .. "", ip)
-        redis_connection:pfadd("IPS_KEY_DAY:" .. date .. ":" .. uri_parameters.api_key .. "", ip)
+        redis_connection:sadd("KEYS:" .. date, uri_parameters.api_key)
+        redis_connection:incr("REQUESTS_DAY:" .. date)
+        redis_connection:incr("REQUESTS_KEY_DAY:" .. date .. ":" .. uri_parameters.api_key)
+        redis_connection:pfadd("IPS_DAY:" .. date, ip)
+        redis_connection:pfadd("IPS_KEY_DAY:" .. date .. ":" .. uri_parameters.api_key, ip)
 
         local results, error = redis_connection:commit_pipeline()
         if not results then
