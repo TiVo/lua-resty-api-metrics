@@ -17,7 +17,7 @@ function log_request(redis_connection, redis_pool_size, ip, uri_parameters, log_
 
         local results, error = redis_connection:commit_pipeline()
         if not results then
-            ngx.log("failed to commit the pipelined requests: ", error)
+            ngx.log(log_level, "failed to commit the pipelined requests: ", error)
             return
         end
 
