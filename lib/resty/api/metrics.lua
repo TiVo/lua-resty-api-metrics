@@ -1,23 +1,23 @@
 _M = { _VERSION = "1.0" }
 
 function log_request(redis_connection, redis_pool_size, ip, uri_parameters, log_level)
-    local date = os.date("%Y-%m-%d")
     if not uri_parameters.api_key then
         return
     end
 
     if string.len(uri_parameters.api_key) == 32 then
+        local date = os.date("%Y-%m-%d")
         redis_connection:init_pipeline()
 
-        redis_connection:sadd("KEYS:" .. date .. "", uri_parameters.api_key)
-        redis_connection:incr("REQUESTS_DAY:" .. date .. "")
-        redis_connection:incr("REQUESTS_KEY_DAY:" .. date .. ":" .. uri_parameters.api_key .. "")
-        redis_connection:pfadd("IPS_DAY:" .. date .. "", ip)
-        redis_connection:pfadd("IPS_KEY_DAY:" .. date .. ":" .. uri_parameters.api_key .. "", ip)
+        redis_connection:sadd("KEYS:" .. date, uri_parameters.api_key)
+        redis_connection:incr("REQUESTS_DAY:" .. date)
+        redis_connection:incr("REQUESTS_KEY_DAY:" .. date .. ":" .. uri_parameters.api_key)
+        redis_connection:pfadd("IPS_DAY:" .. date, ip)
+        redis_connection:pfadd("IPS_KEY_DAY:" .. date .. ":" .. uri_parameters.api_key, ip)
 
         local results, error = redis_connection:commit_pipeline()
         if not results then
-            ngx.say("failed to commit the pipelined requests: ", error)
+            ngx.log(log_level, "failed to commit the pipelined requests: ", error)
             return
         end
 
@@ -32,7 +32,7 @@ function log_request(redis_connection, redis_pool_size, ip, uri_parameters, log_
 end
 
 function _M.log(config)
-    local log_level = config.log_level or ngx.NOTICE
+    local log_level = config.log_level or ngx.ERR
 
     if not config.connection then
         local ok, redis = pcall(require, "resty.redis")
