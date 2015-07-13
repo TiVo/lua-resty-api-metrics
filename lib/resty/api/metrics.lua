@@ -5,7 +5,7 @@ function log_request(redis_connection, redis_pool_size, ip, uri_parameters, log_
         return
     end
 
-    if string.len(uri_parameters.api_key) == 32 then
+    if string.len(tostring(uri_parameters.api_key)) == 32 then
         local date = os.date("%Y-%m-%d")
         redis_connection:init_pipeline()
 
